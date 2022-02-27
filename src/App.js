@@ -1,9 +1,14 @@
 import React from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import LogIn from "./views/LogIn";
 
 function App() {
   return (
-    <div className="App">
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LogIn />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
