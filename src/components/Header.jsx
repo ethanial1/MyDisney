@@ -1,45 +1,89 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom';
-import styled from 'styled-components'
+import React from "react";
+import { NavLink,useNavigate } from "react-router-dom";
+import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  signOut,
+  signInWithPopup,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "../firebase/firebase";
+import {
+  selectUserName,
+  selectUserPhoto,
+  setUserLoginDetails,
+} from "../redux/features/userSlice";
 
 const Header = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate()
+  const userName = useSelector(selectUserName);
+  const userPhoto = useSelector(selectUserPhoto);
+
+  const handleLogIn = () => {
+    const googleProvider = new GoogleAuthProvider();
+    signInWithPopup(auth, googleProvider)
+      .then((res) => {
+        setUser(res.user);
+        navigate('/home')
+      })
+      .catch((erro) => {});
+  };
+
+  const setUser = (user) => {
+    dispatch(
+      setUserLoginDetails({
+        name: user.displayName,
+        email: user.email,
+        photo: user.photoURL,
+      })
+    );
+  };
+
   return (
     <Nav>
       <Logo>
         <img src="/images/logo.svg" alt="disney+" />
       </Logo>
-      <NavMenu>
-        <NavLink to='/home'>
-          <img src="/images/home-icon.svg" alt="home"/>
-          <span>Home</span>
-        </NavLink>
-        <NavLink to='/search'>
-          <img src="/images/search-icon.svg" alt="search"/>
-          <span>Search</span>
-        </NavLink>
-        <NavLink to='/watchlist'>
-          <img src="/images/watchlist-icon.svg" alt="watchlist"/>
-          <span>WatchList</span>
-        </NavLink>
-        <NavLink to='/originals'>
-          <img src="/images/original-icon.svg" alt="original"/>
-          <span>Original</span>
-        </NavLink>
-        <NavLink to='/movies'>
-          <img src="/images/movie-icon.svg" alt="movie"/>
-          <span>Movies</span>
-        </NavLink>
-        <NavLink to='/series'>
-          <img src="/images/series-icon.svg" alt="series"/>
-          <span>Series</span>
-        </NavLink>
-      </NavMenu>
-      <Login>
-        Login
-      </Login>
+      {!userName ? (
+        <Login onClick={handleLogIn}>Login</Login>
+      ) : (
+        <>
+          <NavMenu>
+            <NavLink to="/home">
+              <img src="/images/home-icon.svg" alt="home" />
+              <span>Home</span>
+            </NavLink>
+            <NavLink to="/search">
+              <img src="/images/search-icon.svg" alt="search" />
+              <span>Search</span>
+            </NavLink>
+            <NavLink to="/watchlist">
+              <img src="/images/watchlist-icon.svg" alt="watchlist" />
+              <span>WatchList</span>
+            </NavLink>
+            <NavLink to="/originals">
+              <img src="/images/original-icon.svg" alt="original" />
+              <span>Original</span>
+            </NavLink>
+            <NavLink to="/movies">
+              <img src="/images/movie-icon.svg" alt="movie" />
+              <span>Movies</span>
+            </NavLink>
+            <NavLink to="/series">
+              <img src="/images/series-icon.svg" alt="series" />
+              <span>Series</span>
+            </NavLink>
+          </NavMenu>
+          <UserImg src={userPhoto} alt={userName} />
+        </>
+      )}
     </Nav>
-  )
-}
+  );
+};
 
 const Nav = styled.nav`
   position: fixed;
@@ -100,7 +144,7 @@ const NavMenu = styled.div`
       line-height: 1.08;
       position: relative;
       color: rgb(249, 249, 249);
-      
+
       &:before {
         content: "";
         background-color: rgb(249, 249, 249);
@@ -125,9 +169,7 @@ const NavMenu = styled.div`
         opacity: 1 !important;
       }
     }
-
   }
-
 
   /* @media (max-width: 768px) {
     display: none;
@@ -142,6 +184,7 @@ const Login = styled.a`
   letter-spacing: 1.5px;
   background-color: rgba(0, 0, 0, 0.6);
   transition: all 0.2ms ease 0s;
+  cursor: pointer;
 
   &:hover {
     color: #000;
@@ -150,5 +193,9 @@ const Login = styled.a`
   }
 `;
 
+const UserImg = styled.img`
+  height: 50%;
+  border-radius: 100%;
+`;
 
-export default Header
+export default Header;
