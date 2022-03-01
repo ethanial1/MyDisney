@@ -1,11 +1,13 @@
 import React from 'react'
 import styled from 'styled-components'
 import SliderImg from '../components/SliderImg';
+import Viewers from '../components/Viewers';
 
 const Home = () => {
   return (
     <Container>
       <SliderImg />
+      <Viewers />
     </Container>
   )
 }
@@ -24,6 +26,8 @@ const Container = styled.main`
     inset: 0;
     opacity: 1;
     z-index: -1;
+    background-position: center;
+    background-size: cover;
     background: url('/images/home-background.png') center center no-repeat fixed;
   }
 `;
